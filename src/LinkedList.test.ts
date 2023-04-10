@@ -184,7 +184,7 @@ describe("LinkedList", () => {
     });
   });
 
-  describe.skip("reverse and mutable reverse", () => {
+  describe("reverse and mutable reverse", () => {
     it("should return the linked linkedList reversed", () => {
       const linkedList = new LinkedList<number>().append(1).append(2).append(3);
       const reversedLinkedList = LinkedList.reverse(linkedList);
@@ -207,9 +207,11 @@ describe("LinkedList", () => {
         .prepend(10)
         .append(15);
       const reversedLinkedList = LinkedList.reverse(linkedList);
-      linkedList.mutReverse();
       expect(reversedLinkedList).not.toEqual(linkedList);
-      expect(reversedLinkedList.getValues()).not.toBe(linkedList.getValues());
+      expect(reversedLinkedList.getValues()).not.toEqual(
+        linkedList.getValues()
+      );
+      expect(reversedLinkedList.getLength()).toEqual(linkedList.getLength());
     });
   });
 

@@ -41,13 +41,23 @@ export class LinkedList<T> implements Linked<T> {
     return length;
   }
 
+  private getLengthFromNode(node: Node<T>) {
+    let length = 0;
+    let currentNode = node;
+    while (currentNode !== null) {
+      length++;
+      currentNode = currentNode.getNext() as Node<T>;
+    }
+    return length;
+  }
+
   public append(value: T): this;
   public append(node: Node<T>): this;
   public append(arg: T | Node<T>): this {
     const newNode = arg instanceof Node ? arg : new Node(arg);
     if (!this.head) {
       this.head = newNode;
-      this.increaseLength(this.getLength());
+      this.increaseLength(this.getLengthFromNode(newNode));
       return this;
     }
 
@@ -56,7 +66,7 @@ export class LinkedList<T> implements Linked<T> {
       currentNode = currentNode.getNext() as Node<T>;
     }
     currentNode.setNext(newNode);
-    this.increaseLength(this.getLength());
+    this.increaseLength(this.getLengthFromNode(newNode));
     return this;
   }
 
@@ -64,9 +74,10 @@ export class LinkedList<T> implements Linked<T> {
   public prepend(node: Node<T>): this;
   public prepend(arg: T | Node<T>): this {
     const newHead = arg instanceof Node ? arg : new Node(arg);
+    const newLength = this.getLengthFromNode(newHead);
     if (!this.head) {
       this.head = newHead;
-      this.increaseLength(this.getLength());
+      this.increaseLength(newLength);
       return this;
     }
 
@@ -76,7 +87,7 @@ export class LinkedList<T> implements Linked<T> {
     }
     currentNode.setNext(this.head);
     this.head = newHead;
-    this.increaseLength(this.getLength());
+    this.increaseLength(newLength);
     return this;
   }
 
@@ -136,7 +147,7 @@ export class LinkedList<T> implements Linked<T> {
 
   public forEach(callbackfn: (currentNode: Node<T>) => void) {
     let currentNode = this.head;
-    while (currentNode) {
+    while (currentNode !== null) {
       callbackfn(currentNode);
       currentNode = currentNode.getNext() as Node<T>;
     }
@@ -151,7 +162,6 @@ export class LinkedList<T> implements Linked<T> {
     return values;
   }
 
-  // Se pisan los siguientes nodos
   public mutReverse() {
     const valuesOfNodes = this.getValues().reverse();
     const [lastValue, ...restOfValues] = valuesOfNodes;
@@ -159,14 +169,14 @@ export class LinkedList<T> implements Linked<T> {
     let newHead = new Node<T>(lastValue);
     let currentNode = newHead;
     for (const value of restOfValues) {
-      newHead.setNext(new Node<T>(value));
+      currentNode.setNext(new Node<T>(value));
+      currentNode = currentNode.getNext() as Node<T>;
     }
     this.head = newHead;
     this.length = this.getLength();
     return this;
   }
 
-  // Se pisan los siguientes nodos
   public static reverse<T>(linkedList: LinkedList<T>) {
     const valuesOfNodes = linkedList.getValues().reverse();
     const [lastValue, ...restOfValues] = valuesOfNodes;
@@ -175,7 +185,8 @@ export class LinkedList<T> implements Linked<T> {
     let newHead = new Node<T>(lastValue);
     let currentNode = newHead;
     for (const value of restOfValues) {
-      newHead.setNext(new Node<T>(value));
+      currentNode.setNext(new Node<T>(value));
+      currentNode = currentNode.getNext() as Node<T>;
     }
     return new LinkedList<T>(newHead);
   }
